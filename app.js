@@ -1,142 +1,172 @@
-// 任务管理模块
-let tasks = [];
-let editingTaskId = null;
+// 依赖 Tesseract.js 进行 OCR 识别
+// 需在 HTML 中引入 Tesseract.js CDN
+const uploadArea = document.querySelector('.upload-area');
+const fileInput = document.getElementById('fileInput');
+const previewImg = document.getElementById('previewImg');
+const resultText = document.getElementById('resultText');
+const copyBtn = document.getElementById('copyBtn');
+const downloadBtn = document.getElementById('downloadBtn');
+const ocrBtn = document.getElementById('ocrBtn');
+const progressBar = document.getElementById('progressBar');
+const progressText = document.getElementById('progressText');
+let currentImage = null;
+let enlargedModal = null;
 
-const taskInput = document.getElementById('task-input');
-const addTaskBtn = document.getElementById('add-task-btn');
-const taskList = document.getElementById('task-list');
-const taskCount = document.getElementById('task-count');
-
-function renderTasks() {
-  taskList.innerHTML = '';
-  let completed = 0;
-  tasks.forEach((task, idx) => {
-    const li = document.createElement('li');
-    li.className = 'task-item' + (task.completed ? ' completed' : '');
-    li.innerHTML = `
-      <span>${task.text}</span>
-      <div class="task-actions">
-        <button onclick="toggleTask(${idx})" title="完成/未完成"><i class="fa fa-check-circle"></i></button>
-        <button onclick="editTask(${idx})" title="编辑"><i class="fa fa-edit"></i></button>
-        <button onclick="deleteTask(${idx})" title="删除"><i class="fa fa-trash"></i></button>
-      </div>
-    `;
-    taskList.appendChild(li);
-    if (task.completed) completed++;
-  });
-  taskCount.textContent = `已完成 ${completed} / 总计 ${tasks.length}`;
-}
-
-addTaskBtn.onclick = () => {
-  const val = taskInput.value.trim();
-  if (!val) return;
-  if (editingTaskId !== null) {
-    tasks[editingTaskId].text = val;
-    editingTaskId = null;
-    addTaskBtn.textContent = '添加任务';
-  } else {
-    tasks.push({ text: val, completed: false });
-  }
-  taskInput.value = '';
-  renderTasks();
-};
-
-taskInput.onkeydown = e => {
-  if (e.key === 'Enter') addTaskBtn.onclick();
-};
-
-window.toggleTask = idx => {
-  tasks[idx].completed = !tasks[idx].completed;
-  renderTasks();
-};
-window.editTask = idx => {
-  taskInput.value = tasks[idx].text;
-  editingTaskId = idx;
-  addTaskBtn.textContent = '保存';
-};
-window.deleteTask = idx => {
-  tasks.splice(idx, 1);
-  renderTasks();
-};
-
-// 番茄钟模块
-let mode = 'focus'; // focus or break
-let timer = 30 * 60;
-let timerInterval = null;
-let pomodoroCount = 0;
-let totalFocusSeconds = 0;
-
-const timerDisplay = document.getElementById('timer-display');
-const modeIndicator = document.getElementById('mode-indicator');
-const startBtn = document.getElementById('start-btn');
-const pauseBtn = document.getElementById('pause-btn');
-const resetBtn = document.getElementById('reset-btn');
-const pomodoroCountEl = document.getElementById('pomodoro-count');
-const focusTimeEl = document.getElementById('focus-time');
-
-function updateTimerDisplay() {
-  const min = String(Math.floor(timer / 60)).padStart(2, '0');
-  const sec = String(timer % 60).padStart(2, '0');
-  timerDisplay.textContent = `${min}:${sec}`;
-  modeIndicator.textContent = mode === 'focus' ? '专注中' : '休息中';
-  modeIndicator.className = mode === 'focus' ? 'focus' : 'break';
-}
-
-function startTimer() {
-  if (timerInterval) return;
-  timerInterval = setInterval(() => {
-    if (timer > 0) {
-      timer--;
-      if (mode === 'focus') totalFocusSeconds++;
-      updateTimerDisplay();
-    } else {
-      clearInterval(timerInterval);
-      timerInterval = null;
-      if (mode === 'focus') {
-        pomodoroCount++;
-        pomodoroCountEl.textContent = pomodoroCount;
-        switchMode('break');
-      } else {
-        switchMode('focus');
-      }
+// 拖拽上传
+uploadArea.addEventListener('dragover', e => {
+    e.preventDefault();
+    uploadArea.classList.add('dragover');
+});
+uploadArea.addEventListener('dragleave', e => {
+    e.preventDefault();
+    uploadArea.classList.remove('dragover');
+});
+uploadArea.addEventListener('drop', e => {
+    e.preventDefault();
+    uploadArea.classList.remove('dragover');
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+        showPreview(file);
     }
-    focusTimeEl.textContent = `${Math.floor(totalFocusSeconds/60)} 分钟`;
-  }, 1000);
+});
+uploadArea.addEventListener('click', () => fileInput.click());
+fileInput.addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (file && file.type.startsWith('image/')) {
+        showPreview(file);
+    }
+});
+function showPreview(file) {
+    const reader = new FileReader();
+    reader.onload = e => {
+        previewImg.src = e.target.result;
+        previewImg.style.display = 'block';
+        currentImage = file;
+        resultText.textContent = '';
+        progressBar.style.width = '0%';
+        progressText.textContent = '';
+    };
+    reader.readAsDataURL(file);
 }
 
-function pauseTimer() {
-  clearInterval(timerInterval);
-  timerInterval = null;
+// 预览图片放大功能
+previewImg.addEventListener('click', () => {
+    if (!previewImg.src) return;
+    if (enlargedModal) return;
+    enlargedModal = document.createElement('div');
+    enlargedModal.style.position = 'fixed';
+    enlargedModal.style.left = 0;
+    enlargedModal.style.top = 0;
+    enlargedModal.style.width = '100vw';
+    enlargedModal.style.height = '100vh';
+    enlargedModal.style.background = 'rgba(0,0,0,0.7)';
+    enlargedModal.style.display = 'flex';
+    enlargedModal.style.alignItems = 'center';
+    enlargedModal.style.justifyContent = 'center';
+    enlargedModal.style.zIndex = 9999;
+    enlargedModal.innerHTML = `<img src="${previewImg.src}" style="max-width:90vw;max-height:90vh;border-radius:12px;box-shadow:0 4px 32px #0008;">`;
+    enlargedModal.addEventListener('click', () => {
+        document.body.removeChild(enlargedModal);
+        enlargedModal = null;
+    });
+    document.body.appendChild(enlargedModal);
+});
+
+// 智能预处理图片（灰度、二值化、增强）
+function preprocessImage(img, callback) {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = img.naturalWidth;
+    canvas.height = img.naturalHeight;
+    ctx.drawImage(img, 0, 0);
+    // 灰度
+    let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    let data = imageData.data;
+    for (let i = 0; i < data.length; i += 4) {
+        let avg = 0.299 * data[i] + 0.587 * data[i+1] + 0.114 * data[i+2];
+        data[i] = data[i+1] = data[i+2] = avg;
+    }
+    ctx.putImageData(imageData, 0, 0);
+    // 自适应二值化
+    imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    data = imageData.data;
+    let threshold = 180;
+    for (let i = 0; i < data.length; i += 4) {
+        let v = data[i] > threshold ? 255 : 0;
+        data[i] = data[i+1] = data[i+2] = v;
+    }
+    ctx.putImageData(imageData, 0, 0);
+    // 返回base64
+    callback(canvas.toDataURL('image/png'));
 }
 
-function resetTimer() {
-  pauseTimer();
-  timer = mode === 'focus' ? 30 * 60 : 5 * 60;
-  updateTimerDisplay();
-}
+// 识别按钮
+ocrBtn.addEventListener('click', async () => {
+    if (!currentImage) return;
+    ocrBtn.disabled = true;
+    ocrBtn.textContent = '识别中...';
+    resultText.textContent = '';
+    progressBar.style.width = '0%';
+    progressText.textContent = '0%';
+    // 预处理图片提升识别率
+    const img = new window.Image();
+    img.onload = async () => {
+        preprocessImage(img, async (preprocessedDataUrl) => {
+            // Tesseract 识别
+            const lang = 'mya+eng+chi_sim+chi_tra+osd';
+            try {
+                const { data: { text } } = await Tesseract.recognize(
+                    preprocessedDataUrl,
+                    lang,
+                    {
+                        logger: m => {
+                            if (m.status === 'recognizing text') {
+                                const percent = Math.round(m.progress * 100);
+                                progressBar.style.width = percent + '%';
+                                progressText.textContent = percent + '%';
+                            } else if (m.status) {
+                                progressText.textContent = m.status;
+                            }
+                        },
+                        tessedit_ocr_engine_mode: Tesseract.OEM.LSTM_ONLY,
+                        tessedit_pageseg_mode: Tesseract.PSM.AUTO,
+                    }
+                );
+                // 保持原始排版，使用 <pre> 标签展示
+                resultText.innerHTML = '<pre style="margin:0;font-family:inherit;white-space:pre-wrap;word-break:break-all;">' +
+                    text.trim().replace(/[<>]/g, c => c === '<' ? '&lt;' : '&gt;') + '</pre>';
+                progressBar.style.width = '100%';
+                progressText.textContent = '识别完成';
+            } catch (e) {
+                resultText.textContent = '识别失败，请重试';
+                progressText.textContent = '识别失败';
+            }
+            ocrBtn.disabled = false;
+            ocrBtn.textContent = '一键识别';
+        });
+    };
+    img.src = previewImg.src;
+});
 
-function switchMode(newMode) {
-  mode = newMode;
-  timer = mode === 'focus' ? 30 * 60 : 5 * 60;
-  updateTimerDisplay();
-}
-
-startBtn.onclick = startTimer;
-pauseBtn.onclick = pauseTimer;
-resetBtn.onclick = resetTimer;
-
-updateTimerDisplay();
-
-// 数据统计模块
-const todayTaskEl = document.getElementById('today-task');
-function updateStats() {
-  todayTaskEl.textContent = tasks.filter(t => t.completed).length;
-}
-
-// 监听任务变化，更新统计
-const origRenderTasks = renderTasks;
-renderTasks = function() {
-  origRenderTasks();
-  updateStats();
-};
-renderTasks();
+// 复制按钮
+copyBtn.addEventListener('click', () => {
+    if (!resultText.textContent) return;
+    navigator.clipboard.writeText(resultText.textContent);
+    copyBtn.textContent = '已复制!';
+    setTimeout(() => copyBtn.textContent = '复制', 1200);
+});
+// 下载按钮
+downloadBtn.addEventListener('click', () => {
+    if (!resultText.textContent) return;
+    const blob = new Blob([resultText.textContent], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = '提取结果.txt';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }, 100);
+});
