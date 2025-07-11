@@ -1,0 +1,213 @@
+/* 主题色与基础样式 */
+:root {
+  --primary-gradient: linear-gradient(135deg, #7f7fd5 0%, #86a8e7 50%, #91eac9 100%);
+  --primary-color: #7f7fd5;
+  --accent-color: #86a8e7;
+  --success-color: #91eac9;
+  --danger-color: #ff6b81;
+  --card-bg: rgba(255,255,255,0.95);
+  --text-color: #222;
+  --muted: #888;
+  --radius: 18px;
+  --shadow: 0 4px 24px rgba(127,127,213,0.12);
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  font-family: 'Segoe UI', 'PingFang SC', 'Hiragino Sans', Arial, sans-serif;
+  background: var(--primary-gradient);
+  color: var(--text-color);
+  display: flex;
+  flex-direction: column;
+}
+
+header, footer {
+  text-align: center;
+  padding: 1.2em 0;
+  background: var(--card-bg);
+  box-shadow: var(--shadow);
+  border-radius: 0 0 var(--radius) var(--radius);
+  margin: 0 0 1.5em 0;
+}
+
+main {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 2em;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2em 1em;
+}
+
+.section-card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 2em 1.5em;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.section-card h2 {
+  margin-top: 0;
+  font-size: 1.4em;
+  color: var(--primary-color);
+  letter-spacing: 1px;
+}
+
+/* 任务管理 */
+#task-input-row {
+  display: flex;
+  gap: 0.5em;
+  margin-bottom: 1em;
+}
+#task-input {
+  flex: 1;
+  padding: 0.7em;
+  border-radius: var(--radius);
+  border: 1px solid var(--accent-color);
+  font-size: 1em;
+}
+#add-task-btn {
+  background: var(--primary-gradient);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  padding: 0 1.2em;
+  font-size: 1em;
+  cursor: pointer;
+  transition: box-shadow 0.2s;
+}
+#add-task-btn:hover {
+  box-shadow: 0 2px 8px #7f7fd533;
+}
+#task-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.task-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f7f8fa;
+  border-radius: var(--radius);
+  margin-bottom: 0.7em;
+  padding: 0.7em 1em;
+  box-shadow: 0 1px 4px #7f7fd511;
+  transition: background 0.2s;
+}
+.task-item.completed {
+  text-decoration: line-through;
+  color: var(--muted);
+  background: #e6eafc;
+}
+.task-actions button {
+  background: none;
+  border: none;
+  color: var(--primary-color);
+  font-size: 1.1em;
+  margin-left: 0.5em;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.task-actions button:hover {
+  color: var(--danger-color);
+}
+
+#task-count {
+  margin-top: 0.5em;
+  color: var(--muted);
+  font-size: 0.95em;
+}
+
+/* 番茄钟 */
+#pomodoro-timer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.2em;
+}
+#timer-display {
+  font-size: 2.8em;
+  font-weight: bold;
+  letter-spacing: 2px;
+  color: var(--primary-color);
+  margin-bottom: 0.2em;
+}
+#mode-indicator {
+  font-size: 1.1em;
+  padding: 0.3em 1em;
+  border-radius: 999px;
+  background: var(--accent-color);
+  color: #fff;
+  margin-bottom: 0.5em;
+  transition: background 0.3s;
+}
+#mode-indicator.focus {
+  background: var(--primary-color);
+}
+#mode-indicator.break {
+  background: var(--success-color);
+}
+#timer-controls button {
+  background: var(--primary-gradient);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  padding: 0.5em 1.5em;
+  font-size: 1.1em;
+  margin: 0 0.5em;
+  cursor: pointer;
+  transition: box-shadow 0.2s;
+}
+#timer-controls button:hover {
+  box-shadow: 0 2px 8px #7f7fd533;
+}
+
+/* 数据统计 */
+#stats {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+.stat-row {
+  display: flex;
+  align-items: center;
+  gap: 0.7em;
+  font-size: 1.1em;
+}
+.stat-row i {
+  color: var(--primary-color);
+}
+#chart-placeholder {
+  margin-top: 1.5em;
+  background: #f7f8fa;
+  border-radius: var(--radius);
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  font-size: 1.1em;
+  border: 1px dashed var(--accent-color);
+}
+
+/* 响应式布局 */
+@media (max-width: 900px) {
+  main {
+    grid-template-columns: 1fr;
+    gap: 1.5em;
+  }
+}
+@media (max-width: 600px) {
+  .section-card {
+    padding: 1em 0.5em;
+  }
+  header, footer {
+    padding: 0.7em 0;
+  }
+}
