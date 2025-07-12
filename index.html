@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>我的个人网页</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to right, #000000, #00008B, #8A2BE2);
+      color: white;
+    }
+
+    header {
+      background: rgba(0, 0, 0, 0.7);
+      padding: 30px 0;
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 2.5em;
+      letter-spacing: 2px;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1000px;
+      margin: 40px auto;
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+    }
+
+    .profile-img {
+      display: block;
+      margin: 0 auto 20px;
+      max-width: 150px;
+      border-radius: 50%;
+      border: 3px solid #fff;
+    }
+
+    h2 {
+      margin-top: 40px;
+      text-align: center;
+    }
+
+    /* 幻灯片样式 */
+    .slider-container {
+      overflow-x: auto;
+      white-space: nowrap;
+      padding: 20px 0;
+    }
+
+    .slide {
+      display: inline-block;
+      width: 300px;
+      height: 200px;
+      margin-right: 20px;
+      background-color: #222;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+      vertical-align: top;
+      transition: transform 0.3s ease;
+    }
+
+    .slide:hover {
+      transform: scale(1.05);
+    }
+
+    .slide a {
+      color: #00daff;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    footer {
+      text-align: center;
+      padding: 15px 0;
+      background-color: rgba(0, 0, 0, 0.8);
+      position: fixed;
+      width: 100%;
+      bottom: 0;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>欢迎来到我的个人网页</h1>
+</header>
+
+<div class="container">
+  <img src="images/logo.jpg" alt="我的照片" class="profile-img"/>
+
+  <h2>关于我</h2>
+  <p>你好！我是[ZONE]，一名热爱编程和技术的菜鸟开发初学者。我对前端开发充满热情，并且喜欢创造美观和高效的用户界面,
+    <br>目前正在努力学习中，期待你的关注和建议，谢谢。</p>
+
+  <h2>我的练习作品</h2>
+  <div class="slider-container">
+    <div class="slide">
+      <h3>项目一：自律管理器</h3>
+      <p>一个用于添加任务并管理自律计划的网页应用。</p>
+      <a href="https://aktzone.github.io/zone-website/zilvguanli/" target="_blank">访问项目</a>
+    </div>
+
+    <div class="slide">
+      <h3>项目二：文字提取器</h3>
+      <p>可上传图片识别其中文字内容，并支持一键复制到剪贴板。</p>
+      <a href="https://aktzone.github.io/zone-website/wenzhitiqu/" target="_blank">访问项目</a>
+    </div>
+  </div>
+
+  <h2>联系方式</h2>
+  <ul>
+    <li>Outlook: thingzone@outlook.com</li>
+    <li>GitHub: <a href="https://github.com/AKtzone" target="_blank">https://github.com/AKtzone</a></li>
+  </ul>
+</div>
+
+<footer>
+  <p>&copy; 2023 [ZONE]. 保留所有权利。</p>
+</footer>
+
+</body>
+</html>
