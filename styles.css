@@ -1,0 +1,88 @@
+/* 技能部分样式 */
+.skills-container {
+    padding: 2rem;
+    margin: 0 auto;
+    max-width: 800px;
+}
+
+.skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.skill-category h3 {
+    color: var(--accent);
+    margin-bottom: 1rem;
+}
+
+.skill-category ul {
+    list-style: none;
+}
+
+.skill-category li {
+    margin-bottom: 0.8rem;
+    list-style: none;
+}
+
+/* 联系部分样式 */
+.contact-container {
+    padding: 2rem;
+    margin: 0 auto;
+    max-width: 600px;
+}
+
+.contact-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+}
+
+.contact-item i {
+    font-size: 1.5rem;
+    margin-right: 1rem;
+    color: var(--accent);
+}
+
+/* 关于我们部分样式 */
+.about-container {
+    padding: 2rem;
+    margin: 0 auto;
+    max-width: 800px;
+}
+
+.about-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.about-header h3 {
+    color: var(--accent);
+    margin-bottom: 1rem;
+}
+
+.about-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.about-team h4 {
+    color: var(--purple-light);
+    margin-bottom: 0.8rem;
+}
+
+.about-footer {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.about-footer h4 {
+    color: var(--accent);
+    margin-bottom: 1rem;
+}
